@@ -26,8 +26,6 @@ function RegionDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
-  const [currentPriceIndex, setCurrentPriceIndex] = useState(0);
-  const [currentWeightIndex, setCurrentWeightIndex] = useState(0);
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -215,9 +213,11 @@ function RegionDetailPage() {
     metricsControls.set('hidden');
   }, [controls, headerControls, overviewControls, galleryControls, priceControls, metricsControls]);
 
-  // Fetch region data
+  // Fetch region data - simplified with better error handling
   useEffect(() => {
     const getRegion = async () => {
+      if (!id) return;
+      
       try {
         setLoading(true);
         console.log(`Fetching region with ID: ${id}`);
@@ -226,15 +226,12 @@ function RegionDetailPage() {
         
         if (error) {
           console.error('Error fetching region:', error);
-          setLoading(false);
-          // Don't navigate away, just show error state
           setRegion(null);
           return;
         }
         
         if (!data) {
           console.warn(`No data found for region with ID: ${id}`);
-          setLoading(false);
           setRegion(null);
           return;
         }
@@ -246,23 +243,15 @@ function RegionDetailPage() {
         if (data.media && data.media.length > 0) {
           setSelectedImageIndex(0);
         }
-        
-        // Set initial price and weight indices
-        if (data.singlefilter_price) setCurrentPriceIndex(0);
-        else if (data.doublefilter_price) setCurrentPriceIndex(1);
-        else if (data.mixedfilter_price) setCurrentPriceIndex(2);
-        
-        setLoading(false);
       } catch (error) {
         console.error('Error in getRegion:', error);
-        setLoading(false);
         setRegion(null);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (id) {
-      getRegion();
-    }
+    getRegion();
   }, [id]);
   
   // Start animations after data is loaded with improved sequence
@@ -297,41 +286,8 @@ function RegionDetailPage() {
     overviewInView, galleryInView, priceInView, metricsInView
   ]);
 
-  useEffect(() => {
-    if (!region) return;
-
-    // Rotate through prices
-    const prices = [
-      { label: 'Single Filter Price', value: region.singlefilter_price },
-      { label: 'Double Filter Price', value: region.doublefilter_price },
-      { label: 'Mixed Filter Price', value: region.mixedfilter_price },
-    ].filter(item => item.value && parseFloat(item.value) > 0);
-
-    if (prices.length > 1) {
-      const priceInterval = setInterval(() => {
-        setCurrentPriceIndex(prev => (prev + 1) % prices.length);
-      }, 3000);
-      return () => clearInterval(priceInterval);
-    }
-  }, [region]);
-
-  useEffect(() => {
-    if (!region) return;
-
-    // Rotate through weights
-    const weights = [
-      { label: 'Single Filter Weight', value: region.avg_weight_per_singlefilter },
-      { label: 'Double Filter Weight', value: region.avg_weight_per_doublefilter },
-      { label: 'Mixed Filter Weight', value: region.avg_weight_per_mixedfilter },
-    ].filter(item => item.value);
-
-    if (weights.length > 1) {
-      const weightInterval = setInterval(() => {
-        setCurrentWeightIndex(prev => (prev + 1) % weights.length);
-      }, 3000);
-      return () => clearInterval(weightInterval);
-    }
-  }, [region]);
+  // We no longer need to rotate through prices and weights
+  // since we're displaying all of them at once
 
   // Enhanced image navigation with haptic feedback simulation
   const nextImage = (e) => {
@@ -493,15 +449,15 @@ function RegionDetailPage() {
 
   // Only calculate prices and weights if region exists
   const prices = region ? [
-    { label: 'Single Filter Price', value: region.singlefilter_price },
-    { label: 'Double Filter Price', value: region.doublefilter_price },
-    { label: 'Mixed Filter Price', value: region.mixedfilter_price },
+    { label: 'Single Filter', value: region.singlefilter_price },
+    { label: 'Double Filter', value: region.doublefilter_price },
+    { label: 'Mixed Filter', value: region.mixedfilter_price },
   ].filter(item => item.value && parseFloat(item.value) > 0) : [];
 
   const weights = region ? [
-    { label: 'Single Filter Weight', value: region.avg_weight_per_singlefilter },
-    { label: 'Double Filter Weight', value: region.avg_weight_per_doublefilter },
-    { label: 'Mixed Filter Weight', value: region.avg_weight_per_mixedfilter },
+    { label: 'Single Filter', value: region.avg_weight_per_singlefilter },
+    { label: 'Double Filter', value: region.avg_weight_per_doublefilter },
+    { label: 'Mixed Filter', value: region.avg_weight_per_mixedfilter },
   ].filter(item => item.value) : [];
 
   return (
@@ -524,16 +480,47 @@ function RegionDetailPage() {
         </motion.button>
       </div>
 
-      {/* Main content */}
+      {/* Main content - simplified and focused */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header section with mini slider */}
+          {/* Header section with region name and mini slider */}
           <motion.div
             variants={itemVariants}
             className="mb-8"
           >
-            <div className="bg-white rounded-xl shadow-md p-4">
-              <h1 className="text-2xl font-bold text-gray-800 mb-4">{region.name}</h1>
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                <h1 className="text-3xl font-bold text-gray-800">{region.name}</h1>
+                {region.updated_at && (
+                  <div className="text-sm text-gray-500 mt-2 md:mt-0">
+                    <FaCalendarAlt className="inline mr-1" />
+                    Updated {formatRelativeTime(new Date(region.updated_at))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Description if available */}
+              {region.description && (
+                <div className="mb-6">
+                  <p className="text-gray-600">
+                    {showFullDescription 
+                      ? region.description 
+                      : region.description.length > 120 
+                        ? `${region.description.substring(0, 120)}...` 
+                        : region.description
+                    }
+                  </p>
+                  {region.description.length > 120 && (
+                    <button 
+                      onClick={toggleDescription}
+                      className="text-blue-600 hover:underline mt-1 text-sm font-medium"
+                    >
+                      {showFullDescription ? 'Show less' : 'Read more'}
+                    </button>
+                  )}
+                </div>
+              )}
+              
               <MiniImageSlider 
                 images={region.media || []} 
                 onImageClick={(index) => {
@@ -544,86 +531,84 @@ function RegionDetailPage() {
             </div>
           </motion.div>
 
-          {/* Quick info cards */}
+          {/* Filter Prices and Weights Cards */}
           <motion.div
             variants={staggerContainerVariants}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
           >
+            {/* Filter Prices Card */}
             <motion.div
               variants={cardVariants}
               className="bg-white rounded-xl shadow-md p-4"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Price</h3>
-                  <p className="text-xl font-bold text-gray-800">
-                    {formatPrice(prices[currentPriceIndex]?.value)}
-                  </p>
-                </div>
-                <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <FaTag className="text-blue-600" />
-                </div>
+              <h3 className="text-lg font-medium text-gray-700 mb-3 flex items-center">
+                <FaTag className="text-blue-600 mr-2" />
+                Filter Prices
+              </h3>
+              <div className="space-y-2">
+                {prices.length > 0 ? (
+                  prices.map((price, index) => (
+                    <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100">
+                      <span className="text-gray-600">{price.label}</span>
+                      <span className="text-lg font-semibold text-gray-800">{formatPrice(price.value)}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No price information available</p>
+                )}
               </div>
             </motion.div>
 
+            {/* Average Weights Card */}
             <motion.div
               variants={cardVariants}
               className="bg-white rounded-xl shadow-md p-4"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Weight</h3>
-                  <p className="text-xl font-bold text-gray-800">
-                    {weights[currentWeightIndex]?.value} kg
-                  </p>
-                </div>
-                <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <FaWeightScale className="text-green-600" />
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              variants={cardVariants}
-              className="bg-white rounded-xl shadow-md p-4"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Location</h3>
-                  <p className="text-xl font-bold text-gray-800">
-                    {region.location || 'N/A'}
-                  </p>
-                </div>
-                <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <FaMapMarkerAlt className="text-purple-600" />
-                </div>
+              <h3 className="text-lg font-medium text-gray-700 mb-3 flex items-center">
+                <FaWeightScale className="text-green-600 mr-2" />
+                Average Weights
+              </h3>
+              <div className="space-y-2">
+                {weights.length > 0 ? (
+                  weights.map((weight, index) => (
+                    <div key={index} className="flex justify-between items-center py-1 border-b border-gray-100">
+                      <span className="text-gray-600">{weight.label}</span>
+                      <span className="text-lg font-semibold text-gray-800">{weight.value} kg</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No weight information available</p>
+                )}
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Action buttons */}
+          {/* Action buttons - more prominent */}
           <motion.div
             variants={itemVariants}
-            className="flex gap-4 mb-8"
+            className="bg-white rounded-xl shadow-md p-6 mb-8"
           >
-            <motion.button
-              onClick={handleCallClick}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl font-medium shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaPhone />
-              Call Now
-            </motion.button>
-            <motion.button
-              onClick={handleShareClick}
-              className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium shadow-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaShare />
-              Share
-            </motion.button>
+            <h3 className="text-lg font-medium text-gray-700 mb-4">Contact Options</h3>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <motion.button
+                onClick={handleCallClick}
+                className="flex-1 bg-blue-600 text-white py-4 px-6 rounded-xl font-medium shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-lg"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaPhone className="text-xl" />
+                Call Now
+              </motion.button>
+              <motion.button
+                onClick={handleShareClick}
+                className="flex-1 bg-gray-100 text-gray-700 py-4 px-6 rounded-xl font-medium shadow-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 text-lg"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <FaShare className="text-xl" />
+                Share
+              </motion.button>
+            </div>
           </motion.div>
         </div>
       </div>
