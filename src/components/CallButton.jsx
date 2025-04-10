@@ -5,11 +5,11 @@ import { saveUserPhoneNumber } from '../services/userService';
 
 function CallButton() {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true); // Make visible by default
   const [showModal, setShowModal] = useState(false);
   const [hasSubmittedNumber, setHasSubmittedNumber] = useState(false);
   const [userPhoneNumber, setUserPhoneNumber] = useState('');
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true); // Start with animation
   const companyPhoneNumber = '+91 9876543210'; // Replace with OneRoot's actual phone number
 
   // Check localStorage on mount
@@ -23,19 +23,14 @@ function CallButton() {
     }
   }, []);
 
-  // Show button after scrolling down a bit
+  // Always show the button
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-        setShowTooltip(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Set a timeout to show the tooltip after a short delay
+    const tooltipTimer = setTimeout(() => {
+      setShowTooltip(true);
+    }, 2000);
+    
+    return () => clearTimeout(tooltipTimer);
   }, []);
 
   // Auto-hide tooltip after 5 seconds
@@ -142,20 +137,20 @@ function CallButton() {
         {/* Call Button - Enhanced with better visual effects */}
         <button 
           onClick={handleCallButtonClick}
-          className={`bg-gradient-to-r from-primary to-primary-dark h-16 w-16 rounded-full shadow-lg flex items-center justify-center text-white transform hover:scale-110 transition-all duration-300 hover:shadow-xl ${
+          className={`bg-gradient-to-r from-green-500 to-green-600 h-16 w-16 rounded-full shadow-lg flex items-center justify-center text-white transform hover:scale-110 transition-all duration-300 hover:shadow-xl ${
             isAnimating ? 'animate-attention-bounce' : 'animate-bounce-subtle'
           }`}
           style={{
             boxShadow: isAnimating 
-              ? '0 0 15px 5px rgba(58, 103, 95, 0.5)' 
+              ? '0 0 20px 8px rgba(34, 197, 94, 0.5)' 
               : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
           }}
           aria-label="Request a call"
         >
           {hasSubmittedNumber ? (
-            <FaHeadset className="text-2xl" />
+            <FaHeadset className="text-3xl" />
           ) : (
-            <FaPhone className="text-2xl" />
+            <FaPhone className="text-3xl" />
           )}
         </button>
       </div>
