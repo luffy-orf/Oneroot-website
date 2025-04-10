@@ -48,15 +48,15 @@ export const fetchRegionById = async (id) => {
 
     if (error) {
       console.error(`Supabase error fetching region with id ${id}:`, error);
-      throw error;
+      return { data: null, error };
     }
     
     if (!data) {
       console.warn(`No data found for region with id ${id}`);
-    } else {
-      console.log(`Successfully fetched region: ${data.name}`);
+      return { data: null, error: new Error('Region not found') };
     }
     
+    console.log(`Successfully fetched region: ${data.name}`);
     return { data, error: null };
   } catch (error) {
     console.error(`Error fetching region with id ${id}:`, error);

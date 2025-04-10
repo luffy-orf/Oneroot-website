@@ -17,6 +17,7 @@ import { useSwipeable } from 'react-swipeable';
 // Import our new components
 import RegionGallery from '../components/region-detail/RegionGallery';
 import RegionDetails from '../components/region-detail/RegionDetails';
+import MiniImageSlider from '../components/region-detail/MiniImageSlider';
 
 function RegionDetailPage() {
   const { id } = useParams();
@@ -226,12 +227,15 @@ function RegionDetailPage() {
         if (error) {
           console.error('Error fetching region:', error);
           setLoading(false);
+          // Don't navigate away, just show error state
+          setRegion(null);
           return;
         }
         
         if (!data) {
           console.warn(`No data found for region with ID: ${id}`);
           setLoading(false);
+          setRegion(null);
           return;
         }
         
@@ -248,42 +252,18 @@ function RegionDetailPage() {
         else if (data.doublefilter_price) setCurrentPriceIndex(1);
         else if (data.mixedfilter_price) setCurrentPriceIndex(2);
         
-        if (data.avg_weight_per_singlefilter) setCurrentWeightIndex(0);
-        else if (data.avg_weight_per_doublefilter) setCurrentWeightIndex(1);
-        else if (data.avg_weight_per_mixedfilter) setCurrentWeightIndex(2);
-        
-        // Trigger animations after data is loaded
-        controls.start("visible");
-        headerControls.start("visible");
-        
-        // Add a small delay before showing content for smoother transition
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error('Unexpected error fetching region:', error);
         setLoading(false);
+      } catch (error) {
+        console.error('Error in getRegion:', error);
+        setLoading(false);
+        setRegion(null);
       }
     };
-    
+
     if (id) {
       getRegion();
-    } else {
-      console.error('No region ID provided');
-      setLoading(false);
     }
-    
-    // Cleanup function
-    return () => {
-      // Reset state when component unmounts or ID changes
-      setRegion(null);
-      setSelectedImageIndex(0);
-      setCurrentPriceIndex(0);
-      setCurrentWeightIndex(0);
-      setShowImageModal(false);
-      setActiveTab('overview');
-    };
-  }, [id, controls, headerControls]);
+  }, [id]);
   
   // Start animations after data is loaded with improved sequence
   useEffect(() => {
@@ -487,104 +467,25 @@ function RegionDetailPage() {
 
   if (loading) {
     return (
-      <div className="container-mobile flex justify-center items-center min-h-[80vh] bg-gradient-to-b from-gray-50 to-white">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="flex flex-col items-center"
-        >
-          {/* Enhanced loading spinner */}
-          <div className="relative h-20 w-20 mb-6">
-            <motion.div 
-              className="absolute inset-0 rounded-full border-t-3 border-primary"
-              animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 1.2, 
-                ease: "linear", 
-                repeat: Infinity 
-              }}
-            />
-            <motion.div 
-              className="absolute inset-0 rounded-full border-2 border-gray-200"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ 
-                duration: 2, 
-                ease: "easeInOut", 
-                repeat: Infinity 
-              }}
-            />
-            <motion.div 
-              className="absolute inset-2 rounded-full bg-primary/10"
-              animate={{ opacity: [0.1, 0.3, 0.1] }}
-              transition={{ 
-                duration: 1.5, 
-                ease: "easeInOut", 
-                repeat: Infinity 
-              }}
-            />
-          </div>
-          
-          {/* Loading text with animation */}
-          <motion.div
-            className="flex flex-col items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Loading Region</h3>
-            <p className="text-gray-500 text-center max-w-xs">
-              Preparing detailed information about this region...
-            </p>
-            
-            {/* Animated dots */}
-            <div className="flex space-x-2 mt-4">
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="h-2 w-2 rounded-full bg-primary"
-                  animate={{ 
-                    y: [0, -10, 0],
-                    opacity: [0.5, 1, 0.5]
-                  }}
-                  transition={{ 
-                    duration: 1, 
-                    repeat: Infinity, 
-                    delay: i * 0.2,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   if (!loading && !region) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="container-mobile py-12 text-center"
-      >
-        <div className="bg-white rounded-xl shadow-md p-8 max-w-md mx-auto">
-          <div className="h-20 w-20 mx-auto mb-6 rounded-full bg-red-100 flex items-center justify-center">
-            <FaXmark className="text-red-500 text-3xl" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Region Not Found</h2>
-          <p className="mb-8 text-gray-600">The region you're looking for doesn't exist or has been removed.</p>
-          <Link 
-            to="/regions" 
-            className="bg-primary text-white px-6 py-3 rounded-xl inline-flex items-center justify-center font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Regions
-          </Link>
-        </div>
-      </motion.div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">Region Not Found</h2>
+        <p className="text-gray-600 mb-4">The region you're looking for doesn't exist or has been removed.</p>
+        <Link 
+          to="/regions" 
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <FaArrowLeft className="mr-2" />
+          Back to Regions
+        </Link>
+      </div>
     );
   }
   
@@ -612,45 +513,159 @@ function RegionDetailPage() {
       className="relative min-h-screen bg-gray-50"
     >
       {/* Back button */}
-      <div className="fixed top-4 left-4 z-10">
+      <div className="fixed top-4 left-4 z-50">
         <motion.button
-          onClick={() => navigate(-1)}
-          className="bg-white p-2 rounded-full shadow-md flex items-center justify-center"
+          onClick={() => navigate('/regions')}
+          className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <FaArrowLeft className="text-gray-700" />
+          <FaArrowLeft className="text-gray-700 text-lg" />
         </motion.button>
       </div>
 
       {/* Main content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Gallery section */}
+          {/* Header section with mini slider */}
           <motion.div
             variants={itemVariants}
             className="mb-8"
           >
-            <RegionGallery 
-              media={region.media || []} 
-              regionName={region.name} 
-            />
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">{region.name}</h1>
+              <MiniImageSlider 
+                images={region.media || []} 
+                onImageClick={(index) => {
+                  setSelectedImageIndex(index);
+                  setShowImageModal(true);
+                }}
+              />
+            </div>
           </motion.div>
 
-          {/* Region details */}
+          {/* Quick info cards */}
+          <motion.div
+            variants={staggerContainerVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+          >
+            <motion.div
+              variants={cardVariants}
+              className="bg-white rounded-xl shadow-md p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Price</h3>
+                  <p className="text-xl font-bold text-gray-800">
+                    {formatPrice(prices[currentPriceIndex]?.value)}
+                  </p>
+                </div>
+                <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <FaTag className="text-blue-600" />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              variants={cardVariants}
+              className="bg-white rounded-xl shadow-md p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Weight</h3>
+                  <p className="text-xl font-bold text-gray-800">
+                    {weights[currentWeightIndex]?.value} kg
+                  </p>
+                </div>
+                <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <FaWeightScale className="text-green-600" />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              variants={cardVariants}
+              className="bg-white rounded-xl shadow-md p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Location</h3>
+                  <p className="text-xl font-bold text-gray-800">
+                    {region.location || 'N/A'}
+                  </p>
+                </div>
+                <div className="h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <FaMapMarkerAlt className="text-purple-600" />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Action buttons */}
           <motion.div
             variants={itemVariants}
+            className="flex gap-4 mb-8"
           >
-            <RegionDetails 
-              region={region}
-              onCallClick={handleCallClick}
-              onShareClick={handleShareClick}
-              containerVariants={containerVariants}
-              itemVariants={itemVariants}
-            />
+            <motion.button
+              onClick={handleCallClick}
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl font-medium shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FaPhone />
+              Call Now
+            </motion.button>
+            <motion.button
+              onClick={handleShareClick}
+              className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium shadow-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <FaShare />
+              Share
+            </motion.button>
           </motion.div>
         </div>
       </div>
+
+      {/* Fullscreen image modal */}
+      <AnimatePresence>
+        {showImageModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black z-50 flex items-center justify-center"
+            onClick={() => setShowImageModal(false)}
+          >
+            <div className="relative w-full h-full max-w-4xl max-h-[90vh] p-4">
+              <button
+                onClick={() => setShowImageModal(false)}
+                className="absolute top-4 right-4 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <FaXmark size={24} />
+              </button>
+              <button
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <FaChevronLeft size={24} />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <FaChevronRight size={24} />
+              </button>
+              <img
+                src={region.media[selectedImageIndex].url}
+                alt={`Image ${selectedImageIndex + 1}`}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Call Modal */}
       <AnimatePresence>
