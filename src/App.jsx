@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage'
 import RegionDetailPage from './pages/RegionDetailPage'
+import RegionsPage from './pages/RegionsPage'
 import AdminPage from './pages/AdminPage'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -16,7 +17,9 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/region/:id" element={<RegionDetailPage />} />
+          <Route path="/regions" element={<RegionsPage />} />
+          <Route path="/regions/:id" element={<RegionDetailPage />} />
+          <Route path="/region/:id" element={<RegionDetailPage />} /> {/* Keep for backward compatibility */}
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>

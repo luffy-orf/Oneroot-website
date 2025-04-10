@@ -25,6 +25,13 @@ export const fetchAllRegions = async () => {
 
 export const fetchRegionById = async (id) => {
   try {
+    console.log(`Fetching region with id: ${id}`);
+    
+    if (!id) {
+      console.error('Invalid region ID provided:', id);
+      return { data: null, error: new Error('Invalid region ID') };
+    }
+    
     const { data, error } = await supabase
       .from('regions')
       .select(`
@@ -39,7 +46,17 @@ export const fetchRegionById = async (id) => {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error(`Supabase error fetching region with id ${id}:`, error);
+      throw error;
+    }
+    
+    if (!data) {
+      console.warn(`No data found for region with id ${id}`);
+    } else {
+      console.log(`Successfully fetched region: ${data.name}`);
+    }
+    
     return { data, error: null };
   } catch (error) {
     console.error(`Error fetching region with id ${id}:`, error);

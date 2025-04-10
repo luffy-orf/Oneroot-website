@@ -1,17 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-fouc">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="OneRoot - Browse regions and pricing information" />
-    <title>OneRoot</title>
+    <!-- Mobile-optimized viewport settings -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#3A675F" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- SEO and social sharing -->
+    <meta name="description" content="OneRoot - Connecting farmers with real-time pricing information and regional data" />
+    <meta property="og:title" content="OneRoot.farm - Connecting Farmers" />
+    <meta property="og:description" content="Access real-time pricing information and regional data for agricultural products." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://oneroot.farm" />
+    <meta property="og:image" content="/og-image.jpg" />
+    
+    <title>OneRoot.farm - Connecting Farmers</title>
+    
+    <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA support -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Prevent FOUC -->
+    <style>
+      .no-fouc { opacity: 0; }
+      .fouc-ready { opacity: 1; transition: opacity 0.3s ease-in; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Inline script to detect touch devices early -->
+    <script>
+      if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        document.documentElement.classList.add('touch-device');
+      }
+      
+      // Remove FOUC class after a short delay
+      window.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          document.documentElement.classList.remove('no-fouc');
+          document.documentElement.classList.add('fouc-ready');
+        }, 50);
+      });
+    </script>
   </body>
 </html>
