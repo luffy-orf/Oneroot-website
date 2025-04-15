@@ -113,7 +113,6 @@ const RegionsSection = ({ limit = 6 }) => {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Browse through our extensive collection of regions to find quality filters at competitive prices near you.
           </motion.p>
         </motion.div>
         

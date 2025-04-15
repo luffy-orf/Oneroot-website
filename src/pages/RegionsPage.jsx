@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaFilter, FaSort, FaSearch, FaArrowLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import RegionCard from '../components/RegionCard';
+import MLVideoSection from '../components/MLVideoSection';
 import { fetchAllRegions } from '../services/regionService';
 
 function RegionsPage() {
@@ -97,6 +98,21 @@ function RegionsPage() {
         variants={pageVariants}
         className={`min-h-screen py-16 ${isLoaded ? 'fouc-ready' : 'no-fouc'}`}
       >
+        {/* ML Video Section */}
+        <div className="py-6 bg-gradient-to-r from-blue-50 via-white to-primary-50 mb-8 border-y border-primary-100">
+          <div className="container mx-auto">
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <MLVideoSection />
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
         <div className="container-custom">
           {/* Page Header */}
           <motion.div 
@@ -105,15 +121,11 @@ function RegionsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-
             
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               All <span className="gradient-text">Regions</span>
             </h1>
             
-            <p className="text-lg text-gray-600 max-w-3xl">
-              Browse through our extensive collection of regions to find quality filters at competitive prices near you.
-            </p>
           </motion.div>
           
           {/* Search Bar */}
