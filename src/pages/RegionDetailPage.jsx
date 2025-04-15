@@ -435,11 +435,11 @@ function RegionDetailPage() {
         <h2 className="text-2xl font-semibold text-gray-800 mb-2">Region Not Found</h2>
         <p className="text-gray-600 mb-4">The region you're looking for doesn't exist or has been removed.</p>
         <Link 
-          to="/regions" 
+          to="/" 
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <FaArrowLeft className="mr-2" />
-          Back to Regions
+          Back to Home
         </Link>
       </div>
     );
@@ -471,7 +471,7 @@ function RegionDetailPage() {
       {/* Back button */}
       <div className="fixed top-4 left-4 z-50">
         <motion.button
-          onClick={() => navigate('/regions')}
+          onClick={() => navigate('/')}
           className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}

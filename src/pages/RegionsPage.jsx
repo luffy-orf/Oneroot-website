@@ -105,13 +105,7 @@ function RegionsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Link 
-              to="/" 
-              className="inline-flex items-center text-primary mb-6 group hover:text-primary-dark transition-colors duration-200"
-            >
-              <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
-              <span className="font-medium">Back to Home</span>
-            </Link>
+
             
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               All <span className="gradient-text">Regions</span>

@@ -12,15 +12,44 @@ function CallButton() {
   const [isAnimating, setIsAnimating] = useState(true); // Start with animation
   const companyPhoneNumber = '+91 9876543210'; // Replace with OneRoot's actual phone number
 
-  // Check localStorage on mount
+  // Check localStorage on mount and listen for changes
   useEffect(() => {
-    const hasSubmitted = localStorage.getItem('oneroot_phone_submitted') === 'true';
-    const savedNumber = localStorage.getItem('oneroot_user_phone');
+    const checkLocalStorage = () => {
+      const hasSubmitted = localStorage.getItem('oneroot_phone_submitted') === 'true';
+      const savedNumber = localStorage.getItem('oneroot_user_phone');
+      
+      setHasSubmittedNumber(hasSubmitted);
+      if (savedNumber) {
+        setUserPhoneNumber(savedNumber);
+      }
+    };
     
-    setHasSubmittedNumber(hasSubmitted);
-    if (savedNumber) {
-      setUserPhoneNumber(savedNumber);
-    }
+    // Initial check
+    checkLocalStorage();
+    
+    // Add event listener to detect changes in localStorage from other components
+    const handleStorageChange = (e) => {
+      if (!e || !e.key || e.key === 'oneroot_phone_submitted' || e.key === 'oneroot_user_phone') {
+        checkLocalStorage();
+      }
+    };
+    
+    // Listen for custom event as well
+    const handlePhoneSubmitted = () => {
+      checkLocalStorage();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+    
+    // Check again every 5 seconds to ensure consistency
+    const intervalCheck = setInterval(checkLocalStorage, 5000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+      clearInterval(intervalCheck);
+    };
   }, []);
 
   // Always show the button

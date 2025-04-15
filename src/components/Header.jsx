@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaGooglePlay, FaLeaf, FaHome, FaInfoCircle, FaStar, FaMapMarkedAlt, FaEnvelope } from 'react-icons/fa';
+import { FaGooglePlay, FaLeaf, FaMapMarkedAlt } from 'react-icons/fa';
 import { HiOutlineMenuAlt3, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Disclosure, Transition } from '@headlessui/react';
@@ -12,11 +12,7 @@ function Header() {
 
   // Navigation items with icons
   const navItems = [
-    { name: 'Home', path: '/', icon: FaHome },
-    { name: 'About', path: '/about', icon: FaInfoCircle },
-    { name: 'Features', path: '/#features', icon: FaStar },
     { name: 'Regions', path: '/regions', icon: FaMapMarkedAlt },
-    { name: 'Contact', path: '/#contact', icon: FaEnvelope },
   ];
 
   // Handle scroll effect

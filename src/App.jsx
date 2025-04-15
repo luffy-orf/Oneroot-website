@@ -10,13 +10,41 @@ import CallButton from './components/CallButton'
 import PeriodicPhonePrompt from './components/PeriodicPhonePrompt'
 
 function App() {
+  const [hasSubmittedPhoneNumber, setHasSubmittedPhoneNumber] = useState(false);
+  
+  // Check if user has already submitted a phone number
+  useEffect(() => {
+    const checkPhoneSubmission = () => {
+      const hasSubmitted = localStorage.getItem('oneroot_phone_submitted') === 'true';
+      setHasSubmittedPhoneNumber(hasSubmitted);
+    };
+    
+    // Check on initial load
+    checkPhoneSubmission();
+    
+    // Set up event listeners to detect changes
+    const handleStorageChange = () => checkPhoneSubmission();
+    const handlePhoneSubmitted = () => setHasSubmittedPhoneNumber(true);
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+    
+    // Check periodically
+    const intervalCheck = setInterval(checkPhoneSubmission, 5000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+      clearInterval(intervalCheck);
+    };
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<RegionsPage />} />
           <Route path="/regions" element={<RegionsPage />} />
           <Route path="/regions/:id" element={<RegionDetailPage />} />
           <Route path="/region/:id" element={<RegionDetailPage />} /> {/* Keep for backward compatibility */}
@@ -25,7 +53,7 @@ function App() {
       </main>
       <Footer />
       <CallButton />
-      <PeriodicPhonePrompt />
+      {!hasSubmittedPhoneNumber && <PeriodicPhonePrompt />}
     </div>
   )
 }

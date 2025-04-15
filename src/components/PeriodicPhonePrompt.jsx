@@ -24,6 +24,37 @@ function PeriodicPhonePrompt() {
     };
     
     checkExistingSubmission();
+    
+    // Add event listener to detect changes in localStorage from other components
+    const handleStorageChange = (e) => {
+      if (!e || !e.key || e.key === 'oneroot_phone_submitted') {
+        const hasSubmitted = localStorage.getItem('oneroot_phone_submitted') === 'true';
+        if (hasSubmitted) {
+          setHasSubmittedNumber(true);
+          const storedPhone = localStorage.getItem('oneroot_user_phone');
+          if (storedPhone) {
+            setUserPhoneNumber(storedPhone);
+          }
+        }
+      }
+    };
+    
+    // Listen for custom event as well
+    const handlePhoneSubmitted = () => {
+      setHasSubmittedNumber(true);
+      const storedPhone = localStorage.getItem('oneroot_user_phone');
+      if (storedPhone) {
+        setUserPhoneNumber(storedPhone);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('phoneNumberSubmitted', handlePhoneSubmitted);
+    };
   }, []);
   
   // Set up the periodic prompt

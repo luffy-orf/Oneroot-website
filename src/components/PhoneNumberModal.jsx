@@ -21,9 +21,16 @@ function PhoneNumberModal({ isOpen, onClose, onSubmit }) {
 
   // Validate phone number
   const validatePhoneNumber = (number) => {
-    // Indian phone number validation (10 digits, optionally with +91 prefix)
-    const regex = /^(?:\+91)?[6-9]\d{9}$/;
-    return regex.test(number.replace(/\s+/g, ''));
+    // Check if it's a 10-digit number (with or without +91 prefix)
+    const cleanNumber = number.replace(/\s+/g, '');
+    
+    // If it has +91 prefix, check for 10 digits after that
+    if (cleanNumber.startsWith('+91')) {
+      return cleanNumber.length === 13;
+    }
+    
+    // Otherwise just check for 10 digits
+    return cleanNumber.length === 10 && /^\d+$/.test(cleanNumber);
   };
 
   const handlePhoneChange = (e) => {
@@ -37,7 +44,7 @@ function PhoneNumberModal({ isOpen, onClose, onSubmit }) {
     e.preventDefault();
     
     if (!isValid) {
-      setError('Please enter a valid 10-digit Indian phone number');
+      setError('Please enter a valid 10-digit phone number');
       return;
     }
 
@@ -76,6 +83,17 @@ function PhoneNumberModal({ isOpen, onClose, onSubmit }) {
       localStorage.setItem('oneroot_user_phone', standardNumber);
       localStorage.setItem('oneroot_user_device', deviceType);
       localStorage.setItem('oneroot_phone_submitted', 'true');
+      
+      // Dispatch storage events to notify other components
+      try {
+        window.dispatchEvent(new Event('storage'));
+        // Also dispatch a custom event as a backup
+        window.dispatchEvent(new CustomEvent('phoneNumberSubmitted', {
+          detail: { phoneNumber: standardNumber, deviceType }
+        }));
+      } catch (e) {
+        console.error('Error dispatching events:', e);
+      }
       
       // Close modal after a short delay
       setTimeout(() => {
@@ -142,7 +160,7 @@ function PhoneNumberModal({ isOpen, onClose, onSubmit }) {
                   disabled={isSubmitting}
                 />
                 {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
-                <p className="mt-1 text-xs text-gray-500">Example: 9876543210 or +91 9876543210</p>
+                <p className="mt-1 text-xs text-gray-500">Example: 4557443357 or +91 4557443357</p>
               </div>
               
               <button
