@@ -34,11 +34,11 @@ const MLVideoSection = () => {
                 <div>
                   <h2 className="text-xl font-bold text-gray-800">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-blue-600">
-                      Coconut Counting AI
+                      Coconut Counting Model
                     </span>
                   </h2>
                   <p className="text-gray-700 text-sm">
-                    Our AI detects and counts coconuts with 98% accuracy in real-time
+                    Our Model detects and counts coconuts with 98% accuracy in real-time
                   </p>
                 </div>
               </div>

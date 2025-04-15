@@ -91,11 +91,11 @@ function Footer() {
             <div className="space-y-3">
               <div className="flex items-center text-gray-600">
                 <FaPhoneAlt className="mr-3 text-primary-500" />
-                <span>+91 98765 43210</span>
+                <span>+91 7259930133</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <FaEnvelope className="mr-3 text-primary-500" />
-                <span>contact@oneroot.farm</span>
+                <span>kiran@oneroot.farm</span>
               </div>
               <div className="flex items-start text-gray-600">
                 <FaMapMarkerAlt className="mr-3 mt-1 text-primary-500" />

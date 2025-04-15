@@ -10,7 +10,7 @@ function CallButton() {
   const [hasSubmittedNumber, setHasSubmittedNumber] = useState(false);
   const [userPhoneNumber, setUserPhoneNumber] = useState('');
   const [isAnimating, setIsAnimating] = useState(true); // Start with animation
-  const companyPhoneNumber = '+91 9876543210'; // Replace with OneRoot's actual phone number
+  const companyPhoneNumber = '+91 7259930133'; // Replace with OneRoot's actual phone number
 
   // Check localStorage on mount and listen for changes
   useEffect(() => {

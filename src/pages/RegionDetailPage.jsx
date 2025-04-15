@@ -681,14 +681,14 @@ function RegionDetailPage() {
               
               <div className="space-y-4">
                 <a 
-                  href="tel:+919876543210" 
+                  href="tel:+917259930133" 
                   className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white py-3.5 px-4 rounded-xl w-full font-medium transition-colors duration-300 shadow-md"
                 >
                   <FaPhone className="mr-2" />
                   Call Now
                 </a>
                 <a 
-                  href="https://wa.me/919876543210" 
+                  href="https://wa.me/917259930133" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center justify-center bg-green-100 hover:bg-green-200 text-green-800 py-3.5 px-4 rounded-xl w-full font-medium transition-colors duration-300"

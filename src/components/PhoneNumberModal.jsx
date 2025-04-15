@@ -160,7 +160,7 @@ function PhoneNumberModal({ isOpen, onClose, onSubmit }) {
                   disabled={isSubmitting}
                 />
                 {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
-                <p className="mt-1 text-xs text-gray-500">Example: 4557443357 or +91 4557443357</p>
+                <p className="mt-1 text-xs text-gray-500">Example: 4557443357</p>
               </div>
               
               <button

@@ -66,8 +66,8 @@ const ContactSection = () => {
     {
       icon: <FaPhoneAlt />,
       title: 'Phone',
-      details: '+91 98765 43210',
-      action: 'tel:+919876543210',
+      details: '+91 7259930133',
+      action: 'tel:+917259930133',
       actionText: 'Call us'
     },
     {
@@ -187,7 +187,7 @@ const ContactSection = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className="input"
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 7259930133"
                   />
                 </div>
                 
