@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import HomePage from './pages/HomePage'
@@ -42,20 +43,19 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      {!hasSubmittedPhoneNumber && <PeriodicPhonePrompt />}
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<RegionsPage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/regions" element={<RegionsPage />} />
           <Route path="/regions/:id" element={<RegionDetailPage />} />
-          <Route path="/region/:id" element={<RegionDetailPage />} /> {/* Keep for backward compatibility */}
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />
-      <CallButton />
-      {!hasSubmittedPhoneNumber && <PeriodicPhonePrompt />}
+      <SpeedInsights />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
