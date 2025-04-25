@@ -8,6 +8,11 @@ function RegionCard({ region, index = 0 }) {
   const [currentWeightIndex, setCurrentWeightIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Handle scroll to top on navigation
+  const handleClick = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
   // Filter out prices that are 0 or empty
   const getPriceItems = () => {
     return [
@@ -94,7 +99,7 @@ function RegionCard({ region, index = 0 }) {
       onHoverEnd={() => setIsHovered(false)}
       className="h-full"
     >
-      <Link to={`/regions/${region.id}`} className="block h-full">
+      <Link to={`/regions/${region.id}`} className="block h-full" onClick={handleClick}>
         <div className="card h-full flex flex-col">
           {/* Image Gallery */}
           {region.media && region.media.length > 0 && (

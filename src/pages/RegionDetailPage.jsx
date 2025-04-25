@@ -32,7 +32,12 @@ function RegionDetailPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   // Refs for scroll tracking
   const pageRef = useRef(null);
   const headerRef = useRef(null);
