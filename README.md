@@ -8,7 +8,7 @@ This website serves as a catalog to display filter information and pricing for d
 
 ## Features
 
-- Modern, clean, and visually appealing UI
+- Modern, clean, and visually appealing UI.
 - Mobile-optimized design
 - Real-time data from Supabase
 - Responsive grid showing:
